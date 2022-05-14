@@ -30,14 +30,19 @@ app = FastAPI()
 security = HTTPBasic()
 
 
+@app.on_event("startup")
+def startup():
+    init_db(Base, engine)
+
+
 @app.get('/films')
 def show_films(
-    credentials: HTTPBasicCredentials = Depends(security),
-    substr: Optional[str] = Query(None),
-    year: Optional[int] = Query(None),
-    sort: Optional[str] = Query(None),
-    film_id: Optional[int] = Query(None),
-    limit: Optional[int] = Query(None),
+        credentials: HTTPBasicCredentials = Depends(security),
+        substr: Optional[str] = Query(None),
+        year: Optional[int] = Query(None),
+        sort: Optional[str] = Query(None),
+        film_id: Optional[int] = Query(None),
+        limit: Optional[int] = Query(None),
 ) -> FilmsResponse:
     login, password = credentials.username, credentials.password
     check_user_registration(login, password)
@@ -45,8 +50,8 @@ def show_films(
     with create_session() as session:
         films_query = (
             get_films_with_more_info(session)
-            .group_by(FilmOrm.id)
-            .filter(*get_filters(substr, year, film_id))
+                .group_by(FilmOrm.id)
+                .filter(*get_filters(substr, year, film_id))
         )
         if sort == Sort.BY_RATE.value:
             films_query = films_query.order_by(desc(RateOrm.rate))
@@ -60,9 +65,9 @@ def show_films(
 
 # не получается перенести эту функцию в другой файл
 def get_filters(
-    substr: Optional[str],
-    year: Optional[int],
-    film_id: Optional[int],
+        substr: Optional[str],
+        year: Optional[int],
+        film_id: Optional[int],
 ) -> list[Union[Any, bool]]:
     filters = []
     if substr:
@@ -76,9 +81,9 @@ def get_filters(
 
 @app.post('/films/{film_slug}')
 def create_review_to_film(
-    film_slug: str,
-    review: Union[NewReview, NewRate],
-    credentials: HTTPBasicCredentials = Depends(security),
+        film_slug: str,
+        review: Union[NewReview, NewRate],
+        credentials: HTTPBasicCredentials = Depends(security),
 ) -> CreatedReviewResponse:
     login, password = credentials.username, credentials.password
     check_user_registration(login, password)
@@ -97,9 +102,9 @@ def create_review_to_film(
 
 @app.put('/films/{film_slug}')
 def update_review_to_film(
-    film_slug: str,
-    review: Union[NewReview, NewRate],
-    credentials: HTTPBasicCredentials = Depends(security),
+        film_slug: str,
+        review: Union[NewReview, NewRate],
+        credentials: HTTPBasicCredentials = Depends(security),
 ) -> UpdatedReviewResponse:
     login, password = credentials.username, credentials.password
     check_user_registration(login, password)
@@ -118,7 +123,7 @@ def update_review_to_film(
 
 @app.get('/films/{film_slug}')
 def show_certain_film(
-    film_slug: str, credentials: HTTPBasicCredentials = Depends(security)
+        film_slug: str, credentials: HTTPBasicCredentials = Depends(security)
 ) -> CertainFilmResponse:
     login, password = credentials.username, credentials.password
     check_user_registration(login, password)
@@ -128,8 +133,8 @@ def show_certain_film(
         try:
             film = FilmWithMoreInfoModel.from_orm(
                 get_films_with_more_info(session)
-                .filter(FilmOrm.slug == film_slug)
-                .one()
+                    .filter(FilmOrm.slug == film_slug)
+                    .one()
             )
         except ValidationError as film_not_found:
             raise HTTPException(

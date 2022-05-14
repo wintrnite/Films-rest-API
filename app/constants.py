@@ -1,6 +1,6 @@
 from enum import Enum
 
-DB_FILE_PATH = 'app.db'
+DB_FILE_PATH = 'app/app.db'
 
 
 class ErrorMessage(Enum):

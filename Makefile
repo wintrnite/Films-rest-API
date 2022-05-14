@@ -38,7 +38,7 @@ ci:	lint test ## Lint code then run tests
 
 .PHONY: up
 up:
-	uvicorn app.urls:app --host=0.0.0.0
+	$(VENV)/bin/uvicorn app.urls:app --reload
 
 
 
