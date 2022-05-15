@@ -173,7 +173,7 @@ Response:
 }
 ```
 
-Body (create rate):
+Body (update rate):
 
 ```json
 {
@@ -185,7 +185,7 @@ Response:
 
 ```json
 {
-  "created": {
+  "updated": {
     "rate": 9
   }
 }
