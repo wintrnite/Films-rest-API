@@ -29,10 +29,10 @@ WORKDIR /opt/app
 COPY poetry.lock poetry.lock
 COPY pyproject.toml pyproject.toml
 
+RUN python3.9 -m venv .venv
 RUN poetry install $(if test "$ENVIRONMENT" = production; then echo "--no-dev"; fi)
 
 COPY app app
 COPY Makefile Makefile
 
 ENTRYPOINT []
-CMD ["make", "up"]
