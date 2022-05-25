@@ -11,4 +11,4 @@ services:
       - "8000:8000"
     volumes:
       - '.:/opt/app'
-#    command: ["make", "up"]
+    command: ["make", "up"]
